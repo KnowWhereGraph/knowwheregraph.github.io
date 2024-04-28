@@ -160,7 +160,82 @@ The results for the query are shown below.
 
 ### 3. Understanding Data Values
 
-Data is encoded using the [SOSA](https://www.w3.org/TR/vocab-ssn/) ontology. 
+Data is encoded using the [SOSA](https://www.w3.org/TR/vocab-ssn/) ontology. Looking at the SOSA docs, you'll see that it's a large, complicated ontology! Fortunately, KnowWhereGraph only makes use of several components:
 
-## Conclusions
+1. `sosa:Observation`: Contains numeric or categorical data about an observation which is stored as literal values, accessible through `sosa:hasSimpleResult`.
+2. `sosa:ObservationCollection`: Nodes of this type point to one or more `sosa:Observation` nodes through the relation `sosa:hasMember`.
 
+Rather than using the classnames above, KnowWhereGraph subclasses them into more specific instances. For example, thunderstorm events are connected to `kwg-ont:ImpactObservationCollection`, which is a subclass of `sosa:ObservationCollection`. **Nodes can be connected to multiple observation collections, of different types**
+
+This won't make a huge impact on the way you query data, but allows you to be more specific in the kinds of data that you want.
+
+When reading and using the SOSA ontology, it's important to buy into the concept of properties and observations:
+
+1. Properties: Things being observed. This could be the air temperature, number of deaths, obesity rates, number of beds that a hospital has, etc.
+2. Observation: The act that resulted in a property being observed. It provides the context *around* the property, such as the value of the property or the name of the observation. This would be the literal *number* of hospital beds.
+
+For example,the following query retrieves *all* the observation collections for a particular hazard.
+
+```SPARQL
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+select ?observation_collection where { 
+    <http://stko-kwg.geog.ucsb.edu/lod/resource/hazard.82519.496804> sosa:isFeatureOfInterestOf ?observation_collection .
+    ?observation_collection rdf:type sosa:ObservationCollection .
+}
+```
+
+We see two nodes, which are of type
+
+1. `kwg-ont:ImpactObservationCollection`
+2. `kwg-ont:WindMagnitudeObservationCollection`
+
+The KnowWhereGraph ontology lists all the different kinds of observation collection types that can be requested.
+
+If instead we wanted just the `kwg-ont:ImpactObservationCollection` data, we would specify the type.
+
+```SPARQL
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+select * where { 
+    ?hazard rdf:type kwg-ont:Hazard .
+    ?hazard sosa:isFeatureOfInterestOf ?observation_collection .
+    ?observation_collection rdf:type kwg-ont:ImpactObservationCollection .
+} LIMIT 10
+```
+
+KnowWhereGraph provides an array of different kinds of data. To make it easy to query, we segment each data type into a different class. The image below shows a node of type `kwg-ont:ImpactObservationCollection`. It has several observations, each describing a different type of data. From the names alone, we see that there's data related to
+
+1. Deaths caused directly by the incident
+2. Deaths caused indirectly by the incident
+3. Injuries caused directly by the incident
+4. Injuries caused indirectly by the incident
+
+Each of these nodes is a `sosa:Observation` and can be queried the same way. For a complete list of types of data, refer to the ontology. In addition to the observation having a type - it *also* has an important field `sosa:observedProperty`. This is also used to filter queries to the desired type. Again, the ontology lists the various properties that have been observed.
+
+<img src="./images/ontology/data-types.png" alt="drawing" width="900"/>
+
+A complete example of retrieving the number of direct deaths for several hazards is shown below. Note the connections between the `kwg-ont:Hazard`, the `sosa:ObservationCollection` (technically KnowWhereGraph's subclass of it), and the portion of the query obtaining the literal values.
+
+```SPARQL
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX kwg-ont: <http://stko-kwg.geog.ucsb.edu/lod/ontology/>
+PREFIX kwgr: <http://stko-kwg.geog.ucsb.edu/lod/resource/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+select ?hazard_name ?direct_deaths where { 
+    ?hazard rdf:type kwg-ont:Hazard .
+    ?hazard rdfs:label ?hazard_name .
+    ?hazard sosa:isFeatureOfInterestOf ?observation_collection .
+    ?observation_collection rdf:type kwg-ont:ImpactObservationCollection .
+    ?observation_collection sosa:hasMember ?observation .
+    ?observation sosa:observedProperty kwgr:impactObservableProperty.deathDirect .
+    ?observation sosa:hasSimpleResult ?direct_deaths .
+} LIMIT 10
+```
+
+The results are shown below (luckily these events had 0 associated deaths)
+
+<img src="./images/ontology/data-query.png" alt="drawing" width="900"/>
