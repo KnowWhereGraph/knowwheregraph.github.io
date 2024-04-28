@@ -239,3 +239,4 @@ select ?hazard_name ?direct_deaths where {
 The results are shown below (luckily these events had 0 associated deaths)
 
 <img src="./images/ontology/data-query.png" alt="drawing" width="900"/>
+
