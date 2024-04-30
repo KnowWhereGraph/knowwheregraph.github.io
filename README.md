@@ -1,4 +1,4 @@
-# KnowWhereGraph Dcos
+# KnowWhereGraph Docs
 
 A guide to using KnowWhereGraph
 
