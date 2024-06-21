@@ -4,7 +4,7 @@ A guide to using KnowWhereGraph
 
 ## Understanding the Ontology
 
-Before you can use KnowWhereGraph's data, you must first understand parts of the ontology that are relevant to you. How do you find which parts of the ontology are relevant to you? Get a crash course in the most important ontology aspects and obtain a bird's eye view to figure out what to ask for, and how &mdash; [Here](./ontology.md).
+Before you can use KnowWhereGraph's data, you must first understand parts of the ontology that are relevant to you. How do you find which parts are relevant to you? Get a crash course in the most important ontology aspects and obtain a bird's eye view to figure out what to ask for, and how &mdash; [Here](./ontology.md).
 
 ## Data Acquisition
 
