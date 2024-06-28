@@ -68,7 +68,7 @@ select ?time_label?datetime_begin ?datetime_end where {
 
 When connecting events and data to time, KnowWhereGraph uses its own term, `kwg-ont:hasTemporalScope`. You will *always* use this relation to obtain temporal information about an event.
 
-One important note to take is that data of the same class can have either `time:Instant` *or* `time:Interval` data. This means that if you're querying for data of type `kwg-ont:Hazard` and asking for temporal information --- you need to look for both `time:Instant` *and* `time:Interval` connections.
+One important note to take is that data of the same class can have either `time:Instant` *or* `time:Interval` data. This means that if you're querying for data of type `kwg-ont:Hazard` and asking for temporal information &mdash; you need to look for both `time:Instant` *and* `time:Interval` connections.
 
 An example is shown below where we count the number of `kwg-ont:Hazard`s that are connected to `time:Instant`. At the time of this writing, there are 1,248,050 hazards with time instant data.
 
@@ -213,7 +213,7 @@ KnowWhereGraph provides an array of different kinds of data. To make it easy to 
 3. Injuries caused directly by the incident
 4. Injuries caused indirectly by the incident
 
-Each of these nodes is a `sosa:Observation` and can be queried the same way. For a complete list of types of data, refer to the ontology. In addition to the observation having a type --- it *also* has an important field `sosa:observedProperty`. This is also used to filter queries to the desired type. Again, the ontology lists the various properties that have been observed.
+Each of these nodes is a `sosa:Observation` and can be queried the same way. For a complete list of types of data, refer to the ontology. In addition to the observation having a type &mdash; it *also* has an important field `sosa:observedProperty`. This is also used to filter queries to the desired type. Again, the ontology lists the various properties that have been observed.
 
 <img src="./images/ontology/data_types.png" alt="drawing" width="900"/>
 
