@@ -10,6 +10,6 @@ Before you can use KnowWhereGraph's data, you must first understand part of the 
 
 Obtaining data can be a difficult process - if you're using SPAQRL (which you will be), it's even more. Learn a few tips and tricks to getting the data you need from the database [Here](./sparql-download.md).
 
-## Running your own
+## Running Your Own
 
 It's possible to run your own instance of KnowWhereGraph! Do you *need* to? Do you want to? Read on [Here](./self-hosted.md) to make that call.
