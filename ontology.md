@@ -18,14 +18,14 @@ KnowWhereGraph uses [OWL time](https://www.w3.org/TR/owl-time/) for temporal inf
 
 #### Time Instants
 
-The most basic node that represents time are nodes of type `time:Instant`. These nodes typically have four properties:
+The most basic nodes that represent time are nodes of type `time:Instant`. These nodes typically have four properties:
 
 1. A label with the full datetime
 2. An XSD:Date representation
 3. An XSD:DateTime representation
 4. The year
 
-An example is shown below where the full datetime and year are retrieved from a node of type, `time:Instant`.
+An example is shown below where the full datetime and year are retrieved from a node of type `time:Instant`.
 
 ```SPARQL
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -41,24 +41,24 @@ select ?time_label ?datetime ?year where {
 
 #### Time Intervals
 
-Time intervals are nodes that represent a period of time. It has two properties of interest that point to nodes time instants (see above):
+Time intervals are nodes that represent a period of time. They have two properties of interest that point to time instants (see above):
 
 1. `time:hasBeginning` (when the period of time starts)
 2. `time:hasEnd` (when the period of time ends)
 
-The convenient bit about nodes of this type are that they reference `time:Instant` nodes through the two relations above.
+The convenient bit about nodes of this type is that they reference `time:Instant` nodes through the two relations above.
 
-An example of pulling out the start and end datetimes of an interval is given below. Note how the pattern of querying `time:Instant` is used. *All we've done is start at a `tine:Interval` and grabbed the values from the attached `time:Instant`*.
+An example of pulling out the start and end datetimes of an interval is given below. Note how the pattern of querying `time:Instant` is used. *All we've done is start at a `time:Interval` and grabbed the values from the attached `time:Instant`*.
 
 ```SPARQL
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX time: <http://www.w3.org/2006/time#>
 select ?time_label?datetime_begin ?datetime_end where { 
-    ?time_onterval rdf:type time:Interval .
-    ?time_onterval rdfs:label ?time_label .
-    ?time_onterval time:hasBeginning ?time_begin .
-    ?time_onterval time:hasEnd ?time_end .
+    ?time_interval rdf:type time:Interval .
+    ?time_interval rdfs:label ?time_label .
+    ?time_interval time:hasBeginning ?time_begin .
+    ?time_interval time:hasEnd ?time_end .
     ?time_begin time:inXSDDateTime ?datetime_begin .
     ?time_end time:inXSDDateTime ?datetime_end .
 } limit 1
@@ -66,11 +66,11 @@ select ?time_label?datetime_begin ?datetime_end where {
 
 #### Connecting Things to Time
 
-When connecting events and data to time KnowWhereGraph uses its own term, `kwg-ont:hasTemporalScope`. You will *always* use this relation to obtain information temporal information about an event.
+When connecting events and data to time, KnowWhereGraph uses its own term, `kwg-ont:hasTemporalScope`. You will *always* use this relation to obtain temporal information about an event.
 
-One important note to take is that data of the same class can have either `time:Instant` *or* `time:Interval` data. This means that if you're querying for data of type `kwg-ont:Hazard` and asking for temporal information - you need to look for both `time:Instant` *and* `time:Interval` connections.
+One important note to take is that data of the same class can have either `time:Instant` *or* `time:Interval` data. This means that if you're querying for data of type `kwg-ont:Hazard` and asking for temporal information &mdash; you need to look for both `time:Instant` *and* `time:Interval` connections.
 
-An example is shown below where we count the number of `kwg-ont:Hazard`s that are connected to `time:Instant`. At the time of writing this, there are 1,248,050 hazards with time instant data.
+An example is shown below where we count the number of `kwg-ont:Hazard`s that are connected to `time:Instant`. At the time of this writing, there are 1,248,050 hazards with time instant data.
 
 ```SPARQL
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -121,7 +121,7 @@ select ?datetime ?datetime_begin ?datetime_end where {
         ?hazard_time rdf:type time:Instant .
         ?hazard_time time:inXSDDateTime ?datetime .
     }
-} LIMIT 10
+} LIMIT 16
 ```
 
 The query results are shown below. The important thing to note here is that we have datetimes for instants and the full range for time intervals.
@@ -165,16 +165,16 @@ Data is encoded using the [SOSA](https://www.w3.org/TR/vocab-ssn/) ontology. Loo
 1. `sosa:Observation`: Contains numeric or categorical data about an observation which is stored as literal values, accessible through `sosa:hasSimpleResult`.
 2. `sosa:ObservationCollection`: Nodes of this type point to one or more `sosa:Observation` nodes through the relation `sosa:hasMember`.
 
-Rather than using the classnames above, KnowWhereGraph subclasses them into more specific instances. For example, thunderstorm events are connected to `kwg-ont:ImpactObservationCollection`, which is a subclass of `sosa:ObservationCollection`. **Nodes can be connected to multiple observation collections, of different types**
+Rather than using the class names above, KnowWhereGraph subclasses them into more specific instances. For example, thunderstorm events are connected to `kwg-ont:ImpactObservationCollection`, which is a subclass of `sosa:ObservationCollection`. **Nodes can be connected to multiple observation collections, of different types.**
 
-This won't make a huge impact on the way you query data, but allows you to be more specific in the kinds of data that you want.
+This won't make a huge impact on the way you query data, but it allows you to be more specific in the kinds of data that you want.
 
 When reading and using the SOSA ontology, it's important to buy into the concept of properties and observations:
 
 1. Properties: Things being observed. This could be the air temperature, number of deaths, obesity rates, number of beds that a hospital has, etc.
 2. Observation: The act that resulted in a property being observed. It provides the context *around* the property, such as the value of the property or the name of the observation. This would be the literal *number* of hospital beds.
 
-For example,the following query retrieves *all* the observation collections for a particular hazard.
+For example,the following query retrieves *all* the observation collections for a particular hazard instance.
 
 ```SPARQL
 PREFIX sosa: <http://www.w3.org/ns/sosa/>
@@ -213,11 +213,11 @@ KnowWhereGraph provides an array of different kinds of data. To make it easy to 
 3. Injuries caused directly by the incident
 4. Injuries caused indirectly by the incident
 
-Each of these nodes is a `sosa:Observation` and can be queried the same way. For a complete list of types of data, refer to the ontology. In addition to the observation having a type - it *also* has an important field `sosa:observedProperty`. This is also used to filter queries to the desired type. Again, the ontology lists the various properties that have been observed.
+Each of these nodes is a `sosa:Observation` and can be queried the same way. For a complete list of types of data, refer to the ontology. In addition to the observation having a type &mdash; it *also* has an important field `sosa:observedProperty`. This is also used to filter queries to the desired type. Again, the ontology lists the various properties that have been observed.
 
-<img src="./images/ontology/data-types.png" alt="drawing" width="900"/>
+<img src="./images/ontology/data_types.png" alt="drawing" width="900"/>
 
-A complete example of retrieving the number of direct deaths for several hazards is shown below. Note the connections between the `kwg-ont:Hazard`, the `sosa:ObservationCollection` (technically KnowWhereGraph's subclass of it), and the portion of the query obtaining the literal values.
+A complete example of retrieving the number of direct deaths for several hazards is shown below. Note the connections between the `kwg-ont:Hazard`, the `sosa:ObservationCollection` (technically, KnowWhereGraph's subclass of it), and the portion of the query obtaining the literal values.
 
 ```SPARQL
 PREFIX sosa: <http://www.w3.org/ns/sosa/>
@@ -236,7 +236,7 @@ select ?hazard_name ?direct_deaths where {
 } LIMIT 10
 ```
 
-The results are shown below (luckily these events had 0 associated deaths)
+The results are shown below (luckily these events had 0 associated deaths).
 
 <img src="./images/ontology/data-query.png" alt="drawing" width="900"/>
 

@@ -48,7 +48,7 @@ print(query_result)
 
 ## Going Further
 
-Chances are, you'll want to do than just select one node from the graph. To successfully obtain the data that you need you'll need to first understand the structure of the ontology, which is admittingly not a small task. Rather than becoming familiar with the *entire* ontology - it's recommended that you understand the local area that you're interested in. For example, viewing the ontology documentation for nodes of type `Hazard` and their connections to numerical data.
+Chances are, you'll want to do more than just select one node from the graph. To successfully obtain the data that you need you'll need to first understand the structure of the ontology, which is admittedly not a small task. Rather than becoming familiar with the *entire* ontology &mdash; it's recommended that you understand the local area that you're interested in. For example, view the ontology documentation for nodes of type `Hazard` and their connections to numerical data. For a refresher on key points of KWG's ontology, jump [Here](/./ontology.md).
 
 Reading the ontology, writing a SPARQL query, and referring back to the ontology will undoubtedly be a staple of your data acquisition workflow.
 
